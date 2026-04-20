@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landa — Sweden Readiness Insight Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────────── */
+    :root {
+      --navy:        #1B2A4A;
+      --navy-deep:   #0F1820;
+      --gold:        #C9A84C;
+      --gold-light:  #F5EDD9;
+      --sage:        #3D6B55;
+      --sage-light:  #EAF2EC;
+      --text:        #1A2332;
+      --text-muted:  #6B7A8D;
+      --border:      #E8ECF1;
+      --bg:          #FFFFFF;
+      --bg-light:    #F8FAFC;
+      --radius:      8px;
+      --shadow-sm:   0 2px 8px rgba(27,42,74,0.06);
+      --shadow-md:   0 4px 16px rgba(27,42,74,0.1);
+      --shadow-lg:   0 8px 32px rgba(27,42,74,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 20px;
+      width: 100%;
+    }
+
+    /* ── NAV ────────────────────────────────────────────────────── */
+    nav {
+      background: var(--navy-deep);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+    }
+
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo span {
+      font-size: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      color: rgba(255,255,255,0.95);
+      letter-spacing: 0.8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.72);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--gold);
+      background: rgba(201,168,76,0.15);
+    }
+
+    /* ── PAGES ──────────────────────────────────────────────────── */
+    .page { display: none; }
+    .page.visible { display: block; animation: rise 0.35s ease both; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .wrap {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    main { width: 100%; }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy-deep) 0%, #1a3a50 100%);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 64px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 20%, rgba(201,168,76,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      max-width: 1400px;
+      width: 100%;
+      padding: 0 40px;
+    }
+
+    .hero-text h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+
+    .hero-sub {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      color: rgba(255,255,255,0.8);
+      max-width: 800px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy-deep);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 40px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary:hover {
+      background: #dbb95a;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(201,168,76,0.3);
+    }
+
+    .hero-illustration {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
+    }
+
+    /* ── HOME BODY ──────────────────────────────────────────────── */
+    .home-body {
+      padding: 96px 0;
+      background: var(--bg);
+    }
+
+    .home-body h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .home-body p {
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .notice-box {
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin: 48px 0;
+      font-size: 15px;
+      line-height: 1.8;
+      border: 1px solid;
+    }
+
+    .notice-privacy {
+      background: var(--sage-light);
+      border-color: var(--sage);
+      color: #2a4a38;
+    }
+
+    .notice-disclaimer {
+      background: var(--gold-light);
+      border-color: var(--gold);
+      color: #5a4310;
+    }
+
+    .notice-box strong { font-weight: 600; }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 80px 0 40px;
+      line-height: 1.2;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin: 48px 0;
+    }
+
+    .how-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+    }
+
+    .how-card:hover {
+      border-color: var(--gold);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .how-card .step {
+      font-family: 'Fraunces', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .how-card h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .how-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    /* ── ASSESSMENT ─────────────────────────────────────────────── */
+    .assessment-wrap {
+      padding: 80px 0;
+    }
+
+    .assessment-wrap h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .assessment-wrap .lead {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 48px;
+      max-width: 600px;
+    }
+
+    .q-block {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+
+    .q-block:focus-within {
+      border-color: var(--gold);
+      box-shadow: var(--shadow-md);
+    }
+
+    .q-block label.q-label {
+      display: block;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .q-hint {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.7;
+    }
+
+    .radio-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+      font-size: 15px;
+    }
+
+    .radio-opt:hover {
+      background: rgba(61,107,85,0.05);
+      border-color: var(--border);
+    }
+
+    .radio-opt input[type="radio"] {
+      margin-top: 2px;
+      accent-color: var(--sage);
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .radio-opt.selected {
+      background: var(--sage-light);
+      border-color: var(--sage);
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A8D' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    select:hover { border-color: var(--gold); }
+    select:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(61,107,85,0.1); }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-submit:hover { background: #2e5440; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .btn-submit:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+
+    /* ── RESULTS ────────────────────────────────────────────────── */
+    .results-wrap {
+      padding: 80px 0;
+    }
+
+    .score-hero {
+      background: linear-gradient(135deg, var(--navy-deep) 0%, #1a3a50 100%);
+      border-radius: var(--radius);
+      padding: 60px 48px;
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.1) 0%, transparent 70%);
+    }
+
+    .score-num {
+      font-family: 'Fraunces', serif;
+      font-size: 96px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      position: relative;
+    }
+
+    .score-denom {
+      font-size: 32px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 300;
+    }
+
+    .score-label {
+      font-size: 17px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 24px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .profile-block {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .profile-block h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-block.strengths h3 { color: var(--sage); }
+    .profile-block.risks h3     { color: #8B4A2A; }
+    .profile-block.recs h3      { color: var(--navy); }
+    .profile-block.closing h3   { color: var(--text-muted); font-size: 18px; }
+
+    .profile-text {
+      font-size: 15.5px;
+      line-height: 1.9;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .loading-wrap {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--sage);
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-wrap p {
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .btn-retake {
+      display: inline-block;
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--navy);
+      border-radius: var(--radius);
+      padding: 11px 28px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      margin-bottom: 40px;
+      margin-right: 12px;
+    }
+
+    .btn-retake:hover { background: var(--navy); color: var(--white); }
+
+    .btn-download {
+      display: inline-block;
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 11px 28px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      margin-bottom: 40px;
+    }
+
+    .btn-download:hover { background: #2e5440; transform: translateY(-2px); }
+
+    /* ── RESOURCES ──────────────────────────────────────────────── */
+    .page-wrap {
+      padding: 80px 0;
+    }
+
+    .page-wrap h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .page-wrap .lead {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 48px;
+      max-width: 700px;
+    }
+
+    .page-wrap h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 32px;
+      color: var(--navy);
+      margin: 60px 0 28px;
+      line-height: 1.2;
+    }
+
+    .page-wrap p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    .res-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+    }
+
+    .res-card:hover {
+      border-color: var(--gold);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+
+    .res-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--sage);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .res-card h4::before {
+      font-size: 20px;
+      display: inline-block;
+    }
+
+    .res-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .res-card li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(232,236,241,0.5);
+    }
+
+    .res-card li:last-child {
+      border-bottom: none;
+    }
+
+    .res-card li a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      display: block;
+      transition: color 0.2s;
+      font-weight: 500;
+      flex: 0 0 auto;
+    }
+
+    .res-card li a:hover { color: var(--sage); }
+
+    .res-card li a::before {
+      display: none;
+    }
+
+    .res-card li .res-desc {
+      display: block;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 0;
+      font-weight: 400;
+      flex: 1;
+      text-align: right;
+    }
+
+    /* ── ABOUT TOOL ─────────────────────────────────────────────── */
+    .dimension-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 15px;
+    }
+
+    .dimension-table th {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 14px 18px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .dimension-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dimension-table tr:nth-child(even) td { background: var(--bg-light); }
+
+    .credit-block {
+      background: var(--gold-light);
+      border-left: 4px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #5a4310;
+      margin: 32px 0;
+      font-style: italic;
+    }
+
+    /* ── DEVELOPER ──────────────────────────────────────────────── */
+    .developer-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 44px 48px;
+      box-shadow: var(--shadow-sm);
+      max-width: 700px;
+      margin-top: 40px;
+    }
+
+    .developer-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      color: var(--navy);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .developer-card .role {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .developer-card p {
+      font-size: 16px;
+      margin-bottom: 18px;
+      line-height: 1.8;
+    }
+
+    .developer-card a {
+      color: var(--sage);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .developer-card a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--navy-deep);
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      padding: 48px 40px;
+      margin-top: 96px;
+      border-top: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .footer-inner {
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    .footer-disclaimer {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .footer-disclaimer strong { color: var(--gold); font-weight: 600; }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1350px) {
+      .wrap { max-width: 95%; } 
+      .hero-content { max-width: 1200px; }
+    }
+
+    @media (max-width: 900px) {
+      html { font-size: 16px; }
+      
+      .nav-inner { padding: 0 24px; height: 56px; }
+      .logo { font-size: 18px; }
+      
+      .hero {
+        padding-top: 56px;
+        min-height: 100vh;
+      }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 0 24px;
+      }
+
+      .hero-text h1 { font-size: 48px; }
+      .hero-desc { font-size: 16px; }
+      .hero-illustration { display: none; }
+
+      .wrap { padding: 0 24px; }
+      footer { padding: 40px 24px; }
+
+      .home-body h2,
+      .section-title,
+      .page-wrap h1,
+      .assessment-wrap h1 { font-size: 36px; }
+
+      .how-grid { grid-template-columns: 1fr; }
+      .res-card ul { grid-template-columns: 1fr; }
+      
+      .score-num { font-size: 64px; }
+      .how-card { padding: 28px 24px; }
+    }
+
+    @media (max-width: 640px) {
+      html { font-size: 14px; }
+      
+      .nav-inner { 
+        padding: 0 16px; 
+        height: 52px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .logo { font-size: 16px; }
+      .nav-links { gap: 4px; }
+      .nav-links a { font-size: 12px; padding: 6px 10px; }
+
+      .hero {
+        padding-top: 52px;
+        min-height: 100vh;
+      }
+
+      .hero-content {
+        padding: 0 16px;
+      }
+
+      .hero-text h1 { 
+        font-size: 36px;
+        margin-bottom: 12px;
+      }
+
+      .hero-sub { 
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      .hero-desc { 
+        font-size: 14px;
+        max-width: 100%;
+        margin-bottom: 24px;
+      }
+
+      .btn-primary { 
+        font-size: 14px;
+        padding: 12px 28px;
+      }
+
+      .wrap { padding: 0 16px; max-width: 100%; }
+      
+      .home-body { padding: 48px 0; }
+      .home-body h2,
+      .section-title,
+      .page-wrap h1,
+      .assessment-wrap h1 { font-size: 28px; margin-bottom: 16px; }
+
+      .how-grid { gap: 16px; }
+      .how-card { padding: 20px 16px; }
+      .how-card .step { font-size: 32px; margin-bottom: 8px; }
+      .how-card h4 { font-size: 14px; }
+      .how-card p { font-size: 13px; }
+
+      .notice-box { padding: 16px 18px; font-size: 13px; }
+
+      .assessment-wrap { padding: 48px 0; }
+      .assessment-wrap .lead { font-size: 14px; margin-bottom: 24px; }
+
+      .q-block { padding: 20px 18px; margin-bottom: 16px; }
+      .q-block label.q-label { font-size: 14px; margin-bottom: 6px; }
+      .q-hint { font-size: 12px; margin-bottom: 12px; }
+      .radio-opt { font-size: 14px; gap: 10px; padding: 8px 10px; }
+      .radio-opt input[type="radio"] { width: 16px; height: 16px; }
+
+      select { font-size: 14px; padding: 10px 12px; }
+      .btn-submit { padding: 12px; font-size: 14px; margin-top: 16px; }
+
+      .results-wrap { padding: 48px 0; }
+      .score-hero { padding: 40px 24px; }
+      .score-num { font-size: 52px; }
+      .score-denom { font-size: 20px; }
+      .score-label { font-size: 14px; margin-top: 12px; }
+
+      .profile-block { padding: 20px 18px; margin-bottom: 16px; }
+      .profile-block h3 { font-size: 16px; margin-bottom: 12px; }
+      .profile-text { font-size: 14px; line-height: 1.7; }
+
+      .page-wrap .lead { font-size: 14px; }
+      .res-card { padding: 20px 18px; }
+      .res-card h4 { font-size: 13px; margin-bottom: 12px; gap: 6px; }
+      .res-card h4::before { font-size: 16px; }
+      .res-card li { padding: 8px 0; }
+      .res-card li a { font-size: 14px; }
+      .res-card li .res-desc { font-size: 12px; }
+
+      .developer-card { padding: 28px 20px; }
+      .developer-card h3 { font-size: 22px; }
+      .developer-card p { font-size: 14px; }
+
+      .dimension-table { font-size: 13px; }
+      .dimension-table th { padding: 10px 12px; }
+      .dimension-table td { padding: 10px 12px; }
+
+      footer { padding: 32px 16px; }
+      .footer-disclaimer { padding: 14px 16px; font-size: 12px; }
+      .footer-links { gap: 16px; margin-bottom: 16px; }
+      .footer-bottom { font-size: 11px; padding-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ───────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="show('home')">
+      LANDA
+      <span>Sweden Readiness Insight</span>
+    </div>
+    <ul class="nav-links">
+      <li><a id="nav-home"       onclick="show('home')"        class="active">Home</a></li>
+      <li><a id="nav-assessment" onclick="show('assessment')">Assessment</a></li>
+      <li><a id="nav-resources"  onclick="show('resources')">Resources</a></li>
+      <li><a id="nav-about"      onclick="show('about')">About</a></li>
+      <li><a id="nav-developer"  onclick="show('developer')">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HOME PAGE                                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-home" class="page visible">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>LANDA</h1>
+        <div class="hero-sub">to settle · to land · to build roots</div>
+        <p class="hero-desc">
+          An insight tool for international students considering Sweden. Not a decision-maker — a mirror that reflects how your profile aligns with the realities of building a life in the country.
+        </p>
+        <button class="btn-primary" onclick="show('assessment')">Begin Assessment</button>
+      </div>
+      <div class="hero-illustration">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" width="280" height="360">
+          <!-- Traveler with luggage -->
+          <g transform="translate(150, 150)">
+            <!-- Luggage -->
+            <rect x="-35" y="60" width="50" height="80" rx="4" fill="#C9A84C" opacity="0.9"/>
+            <rect x="-33" y="62" width="46" height="76" rx="3" fill="#E8D9A8"/>
+            <circle cx="-25" cy="145" r="4" fill="#8B7D6B"/>
+            <circle cx="25" cy="145" r="4" fill="#8B7D6B"/>
+            <rect x="-30" y="58" width="60" height="6" rx="3" fill="#C9A84C"/>
+            
+            <!-- Legs -->
+            <line x1="-12" y1="45" x2="-12" y2="70" stroke="#3D6B55" stroke-width="6" stroke-linecap="round"/>
+            <line x1="12" y1="45" x2="12" y2="70" stroke="#3D6B55" stroke-width="6" stroke-linecap="round"/>
+            
+            <!-- Shoes -->
+            <ellipse cx="-12" cy="72" rx="6" ry="5" fill="#1B2A4A"/>
+            <ellipse cx="12" cy="72" rx="6" ry="5" fill="#1B2A4A"/>
+            
+            <!-- Body -->
+            <rect x="-18" y="15" width="36" height="32" rx="6" fill="#F5EDD9"/>
+            
+            <!-- Arms -->
+            <line x1="-18" y1="22" x2="-32" y2="28" stroke="#F5EDD9" stroke-width="6" stroke-linecap="round"/>
+            <line x1="18" y1="22" x2="32" y2="28" stroke="#F5EDD9" stroke-width="6" stroke-linecap="round"/>
+            
+            <!-- Head -->
+            <circle cx="0" cy="0" r="12" fill="#E8C6A0"/>
+            
+            <!-- Hair -->
+            <path d="M -12 -8 Q -8 -15 0 -15 Q 8 -15 12 -8" fill="#1B2A4A"/>
+            
+            <!-- Face details -->
+            <circle cx="-5" cy="-2" r="1.5" fill="#1B2A4A"/>
+            <circle cx="5" cy="-2" r="1.5" fill="#1B2A4A"/>
+            <path d="M -3 3 Q 0 5 3 3" stroke="#1B2A4A" stroke-width="1" fill="none" stroke-linecap="round"/>
+            
+            <!-- Smile -->
+            <path d="M -4 6 Q 0 8 4 6" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-body">
+    <div class="wrap">
+
+      <div class="notice-box notice-privacy">
+        <strong>Privacy:</strong> Your responses are anonymous and not shared with any party. This tool has no affiliation or integration with the Swedish Migration Agency, any Swedish university, or any government body. What you enter stays in your browser and disappears when you leave.
+      </div>
+
+      <h2>What is Landa?</h2>
+      <p>
+        Deciding to study in Sweden is one of the most consequential decisions a non-Swedish person can make. The costs are real, the expectations are high, and the gap between what people imagine and what they find can be significant. Landa exists to help close that gap before you commit.
+      </p>
+      <p>
+        The tool analyses your profile against seven dimensions that have been shown to matter most for international students building a sustainable life in Sweden. Your score and personalised profile are generated from a model grounded in the lived experience of people who have navigated this journey themselves.
+      </p>
+      <p>
+        While the tool is built with African students primarily in mind, it is relevant and useful for any non-EU international student considering Sweden.
+      </p>
+
+      <h2 class="section-title">How it works</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="step">01</div>
+          <h4>Answer 8 questions</h4>
+          <p>Honest, specific questions about your situation. Takes about 5 minutes.</p>
+        </div>
+        <div class="how-card">
+          <div class="step">02</div>
+          <h4>Get your score</h4>
+          <p>A score out of 100 that reflects how well your profile aligns with Sweden's realities.</p>
+        </div>
+        <div class="how-card">
+          <div class="step">03</div>
+          <h4>Read your profile</h4>
+          <p>A personalised written profile covering strengths, areas needing attention, and practical recommendations.</p>
+        </div>
+      </div>
+
+      <div class="notice-box notice-disclaimer">
+        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of success or failure, and it should not be the sole basis for your decision. Sweden is a complex, dynamic environment and there are variables that no model can fully account for. Use this alongside conversations with people who have been there, official information from institutions, and your own judgment.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ASSESSMENT PAGE                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-assessment" class="page">
+  <div class="assessment-wrap">
+    <div class="wrap">
+      <h1>Sweden Readiness Assessment</h1>
+      <p class="lead">Answer as honestly as you can. There are no right answers — only accurate ones.</p>
+
+      <!-- Q0: Programme type -->
+      <div class="q-block">
+        <label class="q-label">What type of programme have you been admitted to?</label>
+        <select id="q-programme" onchange="updateTuitionOptions()">
+          <option value="">Select...</option>
+          <option value="2yr">2 year Master's</option>
+          <option value="1yr">1 year Master's</option>
+        </select>
+      </div>
+
+      <!-- Q1: Tuition -->
+      <div class="q-block">
+        <label class="q-label">How is your tuition covered?</label>
+        <p class="q-hint">Consider all sources: scholarships, personal savings, family support.</p>
+        <div class="radio-stack" id="tuition-options">
+          <label class="radio-opt">
+            <input type="radio" name="tuition" value="full" />
+            My full tuition is covered
+          </label>
+          <label class="radio-opt" id="opt-3of4">
+            <input type="radio" name="tuition" value="3of4" />
+            I have funds for 3 out of 4 semesters
+          </label>
+          <label class="radio-opt" id="opt-2of4">
+            <input type="radio" name="tuition" value="2of4" />
+            I have funds for 2 out of 4 semesters
+          </label>
+          <label class="radio-opt" id="opt-1of4">
+            <input type="radio" name="tuition" value="1of4" />
+            I have funds for 1 out of 4 semesters
+          </label>
+          <label class="radio-opt" id="opt-1of2" style="display:none;">
+            <input type="radio" name="tuition" value="1of2" />
+            I have funds for 1 out of 2 semesters
+          </label>
+        </div>
+      </div>
+
+      <!-- Q2: Language -->
+      <div class="q-block">
+        <label class="q-label">How open are you to learning Swedish?</label>
+        <div class="radio-stack">
+          <label class="radio-opt">
+            <input type="radio" name="language" value="already" />
+            I am already learning Swedish
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="language" value="immediate" />
+            I plan to start immediately upon arrival
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="language" value="unsure" />
+            I am unsure — I may learn it eventually but it is not an immediate priority for me
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="language" value="no" />
+            No, I do not intend to learn Swedish
+          </label>
+        </div>
+      </div>
+
+      <!-- Q3: City -->
+      <div class="q-block">
+        <label class="q-label">Which city will you be studying in?</label>
+        <select id="q-city">
+          <option value="">Select your city...</option>
+          <option value="C">Borlänge</option>
+          <option value="C">Borås</option>
+          <option value="B">Gävle</option>
+          <option value="A">Gothenburg</option>
+          <option value="B">Halmstad</option>
+          <option value="AB">Helsingborg</option>
+          <option value="B">Jönköping</option>
+          <option value="C">Kalmar</option>
+          <option value="C">Karlskrona</option>
+          <option value="B">Karlstad</option>
+          <option value="C">Kristianstad</option>
+          <option value="B">Linköping</option>
+          <option value="AB">Lund</option>
+          <option value="B">Luleå</option>
+          <option value="A">Malmö</option>
+          <option value="B">Norrköping</option>
+          <option value="B">Örebro</option>
+          <option value="C">Östersund</option>
+          <option value="B">Skövde</option>
+          <option value="A">Stockholm</option>
+          <option value="C">Sundsvall</option>
+          <option value="C">Trollhättan</option>
+          <option value="B">Umeå</option>
+          <option value="AB">Uppsala</option>
+          <option value="C">Växjö</option>
+          <option value="B">Västerås</option>
+          <option value="other">Other city not listed</option>
+        </select>
+      </div>
+
+      <!-- Q4: Living Cost Buffer -->
+      <div class="q-block">
+        <label class="q-label">How much do you have saved for living costs upon arrival?</label>
+        <p class="q-hint">This covers rent, food, transport, and day-to-day expenses after arrival.</p>
+        <div class="radio-stack">
+          <label class="radio-opt">
+            <input type="radio" name="living" value="12plus" />
+            12 or more months of living costs
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="living" value="6" />
+            Up to 6 months of living costs
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="living" value="3" />
+            Up to 3 months of living costs
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="living" value="less3" />
+            Less than 3 months of living costs
+          </label>
+        </div>
+      </div>
+
+      <!-- Q5: Course -->
+      <div class="q-block">
+        <label class="q-label">What field is your course in?</label>
+        <p class="q-hint">If your field is not listed, select a closely related one.</p>
+        <select id="q-course">
+          <option value="">Select your field...</option>
+          <option value="A">Software Engineering / IT</option>
+          <option value="A">Data Science / Artificial Intelligence</option>
+          <option value="A">Cybersecurity</option>
+          <option value="A">Electrical Engineering</option>
+          <option value="A">Mechanical Engineering</option>
+          <option value="A">Civil Engineering</option>
+          <option value="A">Energy / Renewable Energy</option>
+          <option value="A">Healthcare / Nursing</option>
+          <option value="A">Biomedical Engineering</option>
+          <option value="B">Biological / Life Sciences</option>
+          <option value="B">Sustainability / Environmental Science</option>
+          <option value="B">Finance / Fintech</option>
+          <option value="B">Architecture</option>
+          <option value="B">Business / Management</option>
+          <option value="B">Logistics / Supply Chain</option>
+          <option value="B">Computer Science</option>
+          <option value="B">Mathematics / Statistics</option>
+          <option value="B">Physics / Chemistry</option>
+          <option value="C">Humanities</option>
+          <option value="C">Social Sciences</option>
+          <option value="C">Media / Communication</option>
+          <option value="C">Law</option>
+          <option value="C">Education</option>
+          <option value="C">Arts</option>
+        </select>
+      </div>
+
+      <!-- Q6: Working Partner -->
+      <div class="q-block">
+        <label class="q-label">What is your situation regarding a partner?</label>
+        <div class="radio-stack">
+          <label class="radio-opt">
+            <input type="radio" name="partner" value="working" />
+            My partner is coming with me and is willing and able to work
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="partner" value="alone" />
+            I am coming alone
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="partner" value="notworking" />
+            My partner is coming with me but will not be working
+          </label>
+        </div>
+      </div>
+
+      <!-- Q7: Conviction -->
+      <div class="q-block">
+        <label class="q-label">How would you describe your conviction about this decision?</label>
+        <div class="radio-stack">
+          <label class="radio-opt">
+            <input type="radio" name="conviction" value="certain" />
+            I am completely certain about this decision
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="conviction" value="fairly" />
+            I am fairly confident but have some unresolved doubts
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="conviction" value="uncertain" />
+            I am uncertain about this decision
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="runAssessment()">Generate My Profile</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- RESULTS PAGE                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-results" class="page">
+  <div class="results-wrap">
+    <div class="wrap">
+      <button class="btn-retake" onclick="retakeAssessment()">← Retake Assessment</button>
+      <button class="btn-download" id="download-btn" onclick="downloadProfilePDF()" style="display:none;">↓ Download Profile</button>
+
+      <div class="score-hero">
+        <div class="score-num" id="result-score">—</div>
+        <div class="score-label" id="result-interp"></div>
+      </div>
+
+      <div id="loading-profile" class="loading-wrap">
+        <div class="spinner"></div>
+        <p>Generating your personalised profile...</p>
+      </div>
+
+      <div id="profile-output" style="display:none;">
+        <div class="profile-block strengths">
+          <h3>Strengths</h3>
+          <div class="profile-text" id="text-strengths"></div>
+        </div>
+        <div class="profile-block risks">
+          <h3>Areas of Risk</h3>
+          <div class="profile-text" id="text-risks"></div>
+        </div>
+        <div class="profile-block recs">
+          <h3>Recommendations</h3>
+          <div class="profile-text" id="text-recs"></div>
+        </div>
+        <div class="profile-block closing">
+          <h3>In Closing</h3>
+          <div class="profile-text" id="text-closing"></div>
+        </div>
+      </div>
+
+      <div class="notice-box notice-disclaimer">
+        <strong>Remember:</strong> This profile reflects your current alignment with Sweden's realities. It is one input among many. Use it alongside advice from people with lived experience, official sources, and your own judgment. Circumstances change, and so can your readiness.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- RESOURCES PAGE                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-resources" class="page">
+  <div class="page-wrap">
+    <div class="wrap">
+      <h1>Resources</h1>
+      <p class="lead">Key links and references for international students navigating Sweden.</p>
+
+      <div class="resource-grid">
+
+        <div class="res-card">
+          <h4>📋 Official Channels</h4>
+          <ul>
+            <li>
+              <a href="https://www.migrationsverket.se/en" target="_blank">
+                Swedish Migration Agency
+                <span class="res-desc">Residence permits, work permits, and immigration information</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://studyinsweden.se" target="_blank">
+                Study in Sweden
+                <span class="res-desc">Official guide to studying in Sweden</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.universityadmissions.se" target="_blank">
+                University Admissions Sweden
+                <span class="res-desc">Application portal for Swedish universities</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.csn.se/languages/english.html" target="_blank">
+                CSN — Student Finance
+                <span class="res-desc">Student loan and grant information</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="res-card">
+          <h4>💼 Jobs and Occupation</h4>
+          <ul>
+            <li>
+              <a href="https://www.arbetsformedlingen.se/en" target="_blank">
+                Arbetsförmedlingen
+                <span class="res-desc">Sweden's Public Employment Service</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.migrationsverket.se/en/you-search-for-our-services/working-in-sweden/occupations-with-a-shortage-of-workers.html" target="_blank">
+                Occupation Shortage List
+                <span class="res-desc">Fields with documented labour shortages</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/jobs/sweden-jobs" target="_blank">
+                LinkedIn Jobs — Sweden
+                <span class="res-desc">Job listings across sectors and cities</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.thelocal.se/jobs" target="_blank">
+                The Local — Sweden Jobs
+                <span class="res-desc">English-language job listings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="res-card">
+          <h4>🗣️ Language</h4>
+          <ul>
+            <li>
+              <a href="https://sfi.se" target="_blank">
+                SFI — Swedish for Immigrants
+                <span class="res-desc">Free Swedish language education for residence permit holders</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.duolingo.com/course/sv/en/Learn-Swedish" target="_blank">
+                Duolingo Swedish
+                <span class="res-desc">Start learning before you arrive</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.folkuniversitetet.se/en" target="_blank">
+                Folkuniversitetet
+                <span class="res-desc">Swedish language and adult education courses</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="res-card">
+          <h4>👥 Community and Support</h4>
+          <ul>
+            <li>
+              <a href="https://www.facebook.com/groups/nigeriansinsweden" target="_blank">
+                Nigerians in Sweden
+                <span class="res-desc">Facebook community for Nigerians living in Sweden</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://placeholder.url" target="_blank">
+                LIVING IN SWEDEN by Hannah
+                <span class="res-desc">WhatsApp community for Africans aspiring to relocate to Sweden</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://t.me/studyinswedencommunity" target="_blank">
+                Study in Sweden by Annie
+                <span class="res-desc">Telegram community for aspiring Nigerian and African students</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.internations.org/sweden-expats" target="_blank">
+                InterNations Sweden
+                <span class="res-desc">International expat community network</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.thelocal.se" target="_blank">
+                The Local Sweden
+                <span class="res-desc">English-language news and practical guides for expats</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="res-card">
+          <h4>🏠 Housing</h4>
+          <ul>
+            <li>
+              <a href="https://www.blocket.se/bostad" target="_blank">
+                Blocket Bostad
+                <span class="res-desc">Sweden's largest property and rental listing platform</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.studentbostader.se" target="_blank">
+                Student Housing Sweden
+                <span class="res-desc">Student-specific housing across Swedish cities</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.livinginsweden.se" target="_blank">
+                Living in Sweden
+                <span class="res-desc">Practical information on daily life and housing</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="res-card">
+          <h4>⚕️ Healthcare and Insurance</h4>
+          <ul>
+            <li>
+              <a href="https://www.1177.se/en" target="_blank">
+                1177 Vårdguiden
+                <span class="res-desc">Sweden's national healthcare guidance in English</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.forsakringskassan.se/english" target="_blank">
+                Försäkringskassan
+                <span class="res-desc">Swedish Social Insurance Agency</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="notice-box notice-disclaimer" style="margin-top: 52px;">
+        <strong>Note:</strong> Links are provided as a convenience. Always verify information directly with official sources.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ABOUT THE TOOL                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="page-wrap">
+    <div class="wrap">
+      <h1>About Landa</h1>
+      <p class="lead">What this tool is, how it works, and who built it.</p>
+
+      <h2>The idea</h2>
+      <p>
+        Landa was built out of a simple observation: many students from Africa and non-EU regions make the decision to study in Sweden with very little structured guidance grounded in real, lived experience. The information that exists is either too generic, too optimistic, or too focused on the academic side of the journey while ignoring the harder question — what does it actually take to settle here and build a life?
+      </p>
+      <p>
+        This tool attempts to answer that question honestly. It does not tell you whether to go. It holds up a mirror and shows you how your current profile aligns with the country's realities, based on the collective experience of people who have lived it.
+      </p>
+
+      <h2>The model</h2>
+      <p>
+        Your profile is assessed across seven dimensions. The weight each dimension carries was determined by aggregating the judgments of international students and graduates with direct experience of Sweden. Intra-dimension scoring reflects editorial judgment informed by research into Sweden's job market, immigration system, and social environment.
+      </p>
+
+      <table class="dimension-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Weight</th>
+            <th>What it captures</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tuition Security</td>
+            <td>27%</td>
+            <td>How fully your tuition is funded going in</td>
+          </tr>
+          <tr>
+            <td>Language Willingness</td>
+            <td>17%</td>
+            <td>Openness to learning Swedish</td>
+          </tr>
+          <tr>
+            <td>City</td>
+            <td>16%</td>
+            <td>The employment characteristics of your study location</td>
+          </tr>
+          <tr>
+            <td>Living Cost Buffer</td>
+            <td>13.5%</td>
+            <td>Financial runway for living expenses</td>
+          </tr>
+          <tr>
+            <td>Course Marketability</td>
+            <td>11.5%</td>
+            <td>Field demand in Sweden's labour market</td>
+          </tr>
+          <tr>
+            <td>Working Partner</td>
+            <td>8%</td>
+            <td>Whether a working partner provides financial support</td>
+          </tr>
+          <tr>
+            <td>Conviction</td>
+            <td>7%</td>
+            <td>Clarity of purpose about the decision</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Limitations</h2>
+      <p>
+        No model captures the full complexity of a person's situation. Landa does not account for your professional experience, your personal network, your psychological resilience, your family circumstances, or the countless other variables that shape how someone's story in a new country unfolds. The score is a starting point for reflection, not a verdict.
+      </p>
+      <p>
+        The model is also based on a relatively small assessor pool at this stage. As more people contribute their experience, the weights will be recalibrated and the tool will become more robust.
+      </p>
+
+      <h2>Privacy and data</h2>
+      <p>
+        Landa collects assessment responses to improve the tool and understand how different profiles are using it. Responses are stored securely and are never shared with third parties. This tool has no relationship with the Swedish Migration Agency or any government body. Your responses inform research to strengthen the model, but are never used to identify you individually.
+      </p>
+
+      <h2>Built on lived experience</h2>
+      <div class="credit-block">
+        This model was developed through insights shared by Dare A., Olumide A., Hannah, and others who chose to remain anonymous. Their honest contributions shaped the weights that drive every profile generated by this tool.
+      </div>
+
+      <div class="notice-box notice-disclaimer">
+        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of outcomes. The profile it generates is based on a model informed by lived experience and research, but Sweden is a complex environment and there are many variables this tool does not and cannot account for. Do not use this tool as your sole basis for making this decision. Landa has no affiliation with any Swedish institution, authority, or university.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- DEVELOPER PAGE                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="page-developer" class="page">
+  <div class="page-wrap">
+    <div class="wrap">
+      <h1>Contact</h1>
+      <p class="lead">About the person behind Landa.</p>
+
+      <div class="developer-card">
+        <h3>Dare Abinde</h3>
+        <div class="role">HCI Master's Student · Uppsala University, Sweden</div>
+        <p>
+          I built Landa because I am living the experience this tool is designed to inform. As an international student from Nigeria navigating Sweden's systems, job market, and social fabric, I wanted to create something honest and grounded that could help the people coming after me make a better-informed decision before they commit.
+        </p>
+        <p>
+          Landa is a free tool and will remain so. It is not affiliated with any institution or commercial interest.
+        </p>
+        <h4 style="font-size: 16px; font-weight: 700; color: var(--navy); margin: 28px 0 14px; margin-top: 32px;">What I do</h4>
+        <p>
+          I work across Interaction and Service Design as a researcher and product thinker. I have a strong commitment to <em>genuinely</em> user-centred and data-driven product design and development. I research and build tools and systems that address real problems for real people.
+        </p>
+        <p>
+          If you are interested in collaborating, discussing research, or exploring opportunities to work together on projects that matter, I would love to hear from you.
+        </p>
+        <p>
+          For questions, feedback, or if you are interested in contributing your experience as an assessor to strengthen the Landa model, feel free to reach out.
+        </p>
+        <p>
+          <strong>Email:</strong> <a href="mailto:dareabinde04@gmail.com">dareabinde04@gmail.com</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-disclaimer">
+      <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of success or failure and should not be the sole basis for any decision. There are variables this model cannot account for. Use it alongside other sources of information and advice. Landa has no affiliation with the Swedish Migration Agency, any Swedish university, or any government body.
+    </div>
+    <div class="footer-links">
+      <a onclick="show('home')">Home</a>
+      <a onclick="show('assessment')">Assessment</a>
+      <a onclick="show('resources')">Resources</a>
+      <a onclick="show('about')">About</a>
+      <a onclick="show('developer')">Contact</a>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Landa. Built by Dare Abinde. Free to use, free to share.
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                                    -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+  /* ── NAVIGATION ──────────────────────────────────────────────── */
+  function show(page) {
+    // First, hide all pages and deactivate nav links
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    
+    // Check if user is trying to go to assessment but has results stored
+    if (page === 'assessment') {
+      const hasResults = localStorage.getItem('landaResults');
+      if (hasResults) {
+        // Redirect to results page instead of assessment
+        page = 'results';
+      }
+    }
+    
+    // Now show the appropriate page
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) {
+      pageEl.classList.add('visible');
+    }
+    
+    const navEl = document.getElementById('nav-' + page);
+    if (navEl) navEl.classList.add('active');
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Handle page-specific logic
+    if (page === 'assessment') {
+      // Only reached if NO results stored
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      document.querySelectorAll('select').forEach(s => s.value = '');
+      document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+      document.getElementById('loading-profile').style.display = 'none';
+      document.getElementById('profile-output').style.display = 'none';
+      document.getElementById('download-btn').style.display = 'none';
+    }
+
+    if (page === 'results') {
+      // Try to restore results from storage
+      restoreResultsIfAvailable();
+    }
+  }
+
+  /* ── RETAKE ASSESSMENT (only this clears results) ──────────── */
+  function retakeAssessment() {
+    clearResults();
+    show('assessment');
+  }
+
+  /* ── RESTORE RESULTS FROM STORAGE ────────────────────────────── */
+  function restoreResultsIfAvailable() {
+    const stored = localStorage.getItem('landaResults');
+    if (stored) {
+      try {
+        const results = JSON.parse(stored);
+        displayResults(results);
+        return true;
+      } catch (e) {
+        console.log('Could not restore results');
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /* ── DISPLAY RESULTS ────────────────────────────────────────── */
+  function displayResults(results) {
+    document.getElementById('result-score').innerHTML = `${results.score} <span class="score-denom">/ 100</span>`;
+    document.getElementById('result-interp').textContent =
+      `Your profile shows a ${results.score}% alignment with the current realities of settling in well in Sweden.`;
+
+    document.getElementById('text-strengths').textContent = results.profile.strengths;
+    document.getElementById('text-risks').textContent     = results.profile.risks;
+    document.getElementById('text-recs').textContent      = results.profile.recs;
+    document.getElementById('text-closing').textContent   = results.profile.closing;
+
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display  = 'block';
+    document.getElementById('download-btn').style.display = 'block';
+  }
+
+  /* ── CLEAR RESULTS AND RESET ────────────────────────────────── */
+  function clearResults() {
+    localStorage.removeItem('landaResults');
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    document.querySelectorAll('select').forEach(s => s.value = '');
+    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display = 'none';
+    document.getElementById('download-btn').style.display = 'none';
+  }
+
+  /* ── RETAKE ASSESSMENT (only this clears results) ──────────── */
+  function retakeAssessment() {
+    clearResults();
+    show('assessment');
+  }
+
+  /* ── RESTORE RESULTS FROM STORAGE ────────────────────────────── */
+  function restoreResultsIfAvailable() {
+    const stored = localStorage.getItem('landaResults');
+    if (stored) {
+      try {
+        const results = JSON.parse(stored);
+        displayResults(results);
+        return true;
+      } catch (e) {
+        console.log('Could not restore results');
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /* ── DISPLAY RESULTS ────────────────────────────────────────── */
+  function displayResults(results) {
+    document.getElementById('result-score').innerHTML = `${results.score} <span class="score-denom">/ 100</span>`;
+    document.getElementById('result-interp').textContent =
+      `Your profile shows a ${results.score}% alignment with the current realities of settling in well in Sweden.`;
+
+    document.getElementById('text-strengths').textContent = results.profile.strengths;
+    document.getElementById('text-risks').textContent     = results.profile.risks;
+    document.getElementById('text-recs').textContent      = results.profile.recs;
+    document.getElementById('text-closing').textContent   = results.profile.closing;
+
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display  = 'block';
+    document.getElementById('download-btn').style.display = 'block';
+  }
+
+  /* ── CLEAR RESULTS AND RESET ────────────────────────────────── */
+  function clearResults() {
+    localStorage.removeItem('landaResults');
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    document.querySelectorAll('select').forEach(s => s.value = '');
+    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display = 'none';
+    document.getElementById('download-btn').style.display = 'none';
+  }
+  function updateTuitionOptions() {
+    const prog = document.getElementById('q-programme').value;
+    const is1yr = prog === '1yr';
+    document.getElementById('opt-3of4').style.display   = is1yr ? 'none' : 'flex';
+    document.getElementById('opt-2of4').style.display   = is1yr ? 'none' : 'flex';
+    document.getElementById('opt-1of4').style.display   = is1yr ? 'none' : 'flex';
+    document.getElementById('opt-1of2').style.display   = is1yr ? 'flex' : 'none';
+    document.querySelectorAll('input[name="tuition"]').forEach(r => r.checked = false);
+    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+  }
+
+  /* ── RADIO HIGHLIGHT ─────────────────────────────────────────── */
+  document.addEventListener('change', function(e) {
+    if (e.target.type === 'radio') {
+      const name = e.target.name;
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+        r.closest('.radio-opt').classList.toggle('selected', r.checked);
+      });
+    }
+  });
+
+  /* ── SCORING ─────────────────────────────────────────────────── */
+  const WEIGHTS = {
+    tuition:    27,
+    language:   17,
+    city:       16,
+    living:     13.5,
+    course:     11.5,
+    partner:    8,
+    conviction: 7
+  };
+
+  const SCORES = {
+    tuition: {
+      full:  1.0,
+      '3of4': 22/27,
+      '2of4': 18/27,
+      '1of4': 10/27,
+      '1of2': 10/27
+    },
+    language: {
+      already: 1.0,
+      immediate: 11/17,
+      unsure:  6/17,
+      no:      2/17
+    },
+    city: {
+      A:     1.0,
+      AB:    12/16,
+      B:     9/16,
+      C:     5/16,
+      other: 2/16
+    },
+    living: {
+      '12plus': 1.0,
+      '6':      10/13.5,
+      '3':      6/13.5,
+      'less3':  2/13.5
+    },
+    course: {
+      A: 1.0,
+      B: 7/11.5,
+      C: 3/11.5
+    },
+    partner: {
+      working:    1.0,
+      alone:      3/8,
+      notworking: 2/8
+    },
+    conviction: {
+      certain:  1.0,
+      fairly:   5/7,
+      uncertain: 2/7
+    }
+  };
+
+  function getVal(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+  }
+
+  function calcScore(answers) {
+    let total = 0;
+    for (const [dim, weight] of Object.entries(WEIGHTS)) {
+      const ans = answers[dim];
+      if (ans && SCORES[dim][ans] !== undefined) {
+        total += weight * SCORES[dim][ans];
+      }
+    }
+    return Math.round(total);
+  }
+
+  /* ── MAIN ASSESSMENT RUNNER ──────────────────────────────────── */
+  async function runAssessment() {
+    const answers = {
+      programme:  document.getElementById('q-programme').value,
+      tuition:    getVal('tuition'),
+      language:   getVal('language'),
+      city:       document.getElementById('q-city').value,
+      living:     getVal('living'),
+      course:     document.getElementById('q-course').value,
+      partner:    getVal('partner'),
+      conviction: getVal('conviction')
+    };
+
+    const missing = [];
+    if (!answers.programme)  missing.push('programme type');
+    if (!answers.tuition)    missing.push('tuition coverage');
+    if (!answers.language)   missing.push('language openness');
+    if (!answers.city)       missing.push('city');
+    if (!answers.living)     missing.push('living cost buffer');
+    if (!answers.course)     missing.push('course field');
+    if (!answers.partner)    missing.push('partner situation');
+    if (!answers.conviction) missing.push('conviction');
+
+    if (missing.length > 0) {
+      alert('Please complete the following:\n\n' + missing.map(m => '• ' + m).join('\n'));
+      return;
+    }
+
+    const score = calcScore(answers);
+
+    show('results');
+    document.getElementById('result-score').innerHTML = `${score} <span class="score-denom">/ 100</span>`;
+    document.getElementById('result-interp').textContent =
+      `Your profile shows a ${score}% alignment with the current realities of settling in well in Sweden.`;
+
+    // Clear previous profile state
+    document.getElementById('text-strengths').textContent = '';
+    document.getElementById('text-risks').textContent = '';
+    document.getElementById('text-recs').textContent = '';
+    document.getElementById('text-closing').textContent = '';
+    document.getElementById('loading-profile').innerHTML = '<div class="spinner"></div><p>Generating your personalised profile...</p>';
+    document.getElementById('loading-profile').style.display = 'block';
+    document.getElementById('profile-output').style.display = 'none';
+    document.getElementById('download-btn').style.display = 'none';
+
+    try {
+      const res = await fetch('/.netlify/functions/generate-profile', {
+        method: 'POST',
+        body: JSON.stringify({ answers, score })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to generate profile');
+      }
+
+      const data = await res.json();
+
+      document.getElementById('text-strengths').textContent = data.strengths;
+      document.getElementById('text-risks').textContent     = data.risks;
+      document.getElementById('text-recs').textContent      = data.recs;
+      document.getElementById('text-closing').textContent   = data.closing;
+
+      document.getElementById('loading-profile').style.display = 'none';
+      document.getElementById('profile-output').style.display  = 'block';
+      document.getElementById('download-btn').style.display = 'block';
+
+      // Save results to localStorage
+      const results = {
+        answers: answers,
+        score: score,
+        profile: data,
+        timestamp: new Date().getTime()
+      };
+      localStorage.setItem('landaResults', JSON.stringify(results));
+
+      // Submit to Netlify Forms for data collection
+      submitFormData(answers, score, data);
+
+    } catch (err) {
+      document.getElementById('loading-profile').innerHTML =
+        `<p style="color:#8B4A2A;"><strong>Could not generate profile.</strong><br>${err.message}<br><br>
+        Please try again in a moment.</p>`;
+    }
+  }
+
+  /* ── SUBMIT TO NETLIFY FORMS ─────────────────────────────────── */
+  function submitFormData(answers, score, profile) {
+    const formData = new FormData();
+    formData.append('form-name', 'assessment-submission');
+    formData.append('programme', answers.programme);
+    formData.append('tuition', answers.tuition);
+    formData.append('language', answers.language);
+    formData.append('city', answers.city);
+    formData.append('living', answers.living);
+    formData.append('course', answers.course);
+    formData.append('partner', answers.partner);
+    formData.append('conviction', answers.conviction);
+    formData.append('score', score);
+    formData.append('profile_strengths', profile.strengths);
+    formData.append('profile_risks', profile.risks);
+    formData.append('profile_recs', profile.recs);
+    formData.append('profile_closing', profile.closing);
+
+    fetch('/', {
+      method: 'POST',
+      body: formData
+    }).catch(e => console.log('Form submission logged'));
+  }
+
+  /* ── DOWNLOAD PROFILE AS PDF ─────────────────────────────────── */
+  function downloadProfilePDF() {
+    const score = document.getElementById('result-score').textContent.split(' ')[0];
+    const interp = document.getElementById('result-interp').textContent;
+    const strengths = document.getElementById('text-strengths').textContent;
+    const risks = document.getElementById('text-risks').textContent;
+    const recs = document.getElementById('text-recs').textContent;
+    const closing = document.getElementById('text-closing').textContent;
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.4; color: #2B3545; padding: 15px;">
+        <h1 style="font-size: 24px; color: #1B2A4A; margin-bottom: 4px;">Landa</h1>
+        <div style="color: #C9A84C; font-size: 12px; margin-bottom: 16px;">Your Sweden Readiness Profile</div>
+
+        <div style="background: #f5f5f5; padding: 12px; border-left: 4px solid #C9A84C; margin: 16px 0;">
+          <div style="font-size: 36px; font-weight: 700; color: #C9A84C;">${score} / 100</div>
+          <div style="font-size: 12px; color: #6B7A8D; margin-top: 8px;">${interp}</div>
+        </div>
+
+        <div style="margin: 16px 0;">
+          <h3 style="font-size: 14px; color: #1B2A4A; margin-bottom: 8px; border-bottom: 2px solid #E0E4EA; padding-bottom: 6px;">Strengths</h3>
+          <div style="white-space: pre-wrap; font-size: 12px; line-height: 1.5;">${strengths}</div>
+        </div>
+
+        <div style="margin: 16px 0;">
+          <h3 style="font-size: 14px; color: #1B2A4A; margin-bottom: 8px; border-bottom: 2px solid #E0E4EA; padding-bottom: 6px;">Areas of Risk</h3>
+          <div style="white-space: pre-wrap; font-size: 12px; line-height: 1.5;">${risks}</div>
+        </div>
+
+        <div style="margin: 16px 0;">
+          <h3 style="font-size: 14px; color: #1B2A4A; margin-bottom: 8px; border-bottom: 2px solid #E0E4EA; padding-bottom: 6px;">Recommendations</h3>
+          <div style="white-space: pre-wrap; font-size: 12px; line-height: 1.5;">${recs}</div>
+        </div>
+
+        <div style="margin: 16px 0;">
+          <h3 style="font-size: 14px; color: #1B2A4A; margin-bottom: 8px; border-bottom: 2px solid #E0E4EA; padding-bottom: 6px;">In Closing</h3>
+          <div style="white-space: pre-wrap; font-size: 12px; line-height: 1.5;">${closing}</div>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #E0E4EA; font-size: 10px; color: #6B7A8D;">
+          <p style="margin: 0 0 4px 0;">This profile was generated by Landa on ${new Date().toLocaleDateString()}. It reflects your profile at this moment in time.</p>
+          <p style="margin: 0;">Learn more at landainsight.se</p>
+        </div>
+      </div>
+    `;
+
+    const opt = {
+      margin: [6, 6, 6, 6],
+      filename: `Landa_Profile_${score}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+      pagebreak: { mode: 'avoid', before: ['div.pagebreak'] }
+    };
+
+    html2pdf().set(opt).from(html).save();
+  }
+</script>
+</body>
+</html>
