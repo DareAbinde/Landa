@@ -53,11 +53,10 @@
     }
 
     .nav-inner {
-      max-width: 1400px;
+      max-width: 1550px;
       margin: 0 auto;
       padding: 0 40px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
       height: 64px;
     }
@@ -72,6 +71,7 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
+      flex-shrink: 0;
     }
 
     .logo span {
@@ -80,6 +80,15 @@
       font-weight: 400;
       color: rgba(255,255,255,0.95);
       letter-spacing: 0.8px;
+    }
+
+    /* Wrapper confines links to right-most 1400px of nav */
+    .nav-links-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      max-width: 1400px;
+      margin-left: auto;
     }
 
     .nav-links {
@@ -97,12 +106,76 @@
       border-radius: var(--radius);
       transition: all 0.2s;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .nav-links a:hover,
     .nav-links a.active {
       color: var(--gold);
       background: rgba(201,168,76,0.15);
+    }
+
+    /* Mobile actions: clipboard icon + hamburger pill — hidden on desktop */
+    .nav-actions {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.72);
+      font-size: 20px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .nav-icon-btn:hover { color: var(--gold); }
+
+    .nav-hamburger {
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 999px;
+      cursor: pointer;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s;
+    }
+
+    .nav-hamburger:hover { background: rgba(201,168,76,0.25); }
+
+    .menu-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.3px;
+    }
+
+    .menu-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-lines span {
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 2px;
+      transition: all 0.2s;
     }
 
     /* ── PAGES ──────────────────────────────────────────────────── */
@@ -115,7 +188,7 @@
     }
 
     .wrap {
-      max-width: 1250px;
+      max-width: 1280px;
       margin: 0 auto;
       padding: 0 40px;
     }
@@ -149,7 +222,7 @@
       align-items: center;
       position: relative;
       z-index: 2;
-      max-width: 1400px;
+      max-width: 1550px;
       width: 100%;
       padding: 0 40px;
     }
@@ -684,10 +757,6 @@
 
     .res-card li a:hover { color: var(--sage); }
 
-    .res-card li a::before {
-      display: none;
-    }
-
     .res-card li .res-desc {
       display: block;
       font-size: 14px;
@@ -870,39 +939,62 @@
 
     @media (max-width: 640px) {
       html { font-size: 14px; }
-      
-      .nav-inner { 
-        padding: 0 16px; 
-        height: 52px;
+
+      /* Hide desktop links wrapper, show mobile actions */
+      .nav-links-wrapper { display: none; }
+      .nav-links-wrapper.active {
+        display: flex;
         flex-direction: column;
-        justify-content: center;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: var(--navy-deep);
+        border-top: 1px solid rgba(201,168,76,0.2);
+        padding: 12px 16px 20px;
+        z-index: 99;
+      }
+      .nav-links-wrapper.active .nav-links {
+        flex-direction: column;
         gap: 4px;
+        width: 100%;
+      }
+      .nav-links-wrapper.active .nav-links a {
+        font-size: 15px;
+        padding: 12px 16px;
+        width: 100%;
+        display: block;
       }
 
-      .logo { font-size: 16px; }
-      .nav-links { gap: 4px; }
-      .nav-links a { font-size: 12px; padding: 6px 10px; }
+      .nav-actions { display: flex; }
+      .logo span { display: none; }
+
+      .nav-inner {
+        padding: 0 16px;
+        height: 64px;
+      }
 
       .hero {
-        padding-top: 52px;
+        padding-top: 64px;
         min-height: 100vh;
       }
 
       .hero-content {
         padding: 0 16px;
+        max-width: 100%;
       }
 
-      .hero-text h1 { 
+      .hero-text h1 {
         font-size: 36px;
         margin-bottom: 12px;
       }
 
-      .hero-sub { 
+      .hero-sub {
         font-size: 14px;
         margin-bottom: 16px;
       }
 
-      .hero-desc { 
+      .hero-desc {
         font-size: 14px;
         max-width: 100%;
         margin-bottom: 24px;
@@ -929,7 +1021,7 @@
 
       .notice-box { padding: 16px 18px; font-size: 13px; }
 
-      .assessment-wrap { padding: 48px 0; }
+      .assessment-wrap { padding: 88px 0 48px; }
       .assessment-wrap .lead { font-size: 14px; margin-bottom: 24px; }
 
       .q-block { padding: 20px 18px; margin-bottom: 16px; }
@@ -955,9 +1047,22 @@
       .res-card { padding: 20px 18px; }
       .res-card h4 { font-size: 13px; margin-bottom: 12px; gap: 6px; }
       .res-card h4::before { font-size: 16px; }
-      .res-card li { padding: 8px 0; }
-      .res-card li a { font-size: 14px; }
-      .res-card li .res-desc { font-size: 12px; }
+      
+      /* MOBILE RESOURCE CARD FIX: stack title & description */
+      .res-card li {
+        display: block;
+        padding: 8px 0;
+      }
+      .res-card li a {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+      .res-card li .res-desc {
+        display: block;
+        text-align: left;
+        font-size: 12px;
+      }
 
       .developer-card { padding: 28px 20px; }
       .developer-card h3 { font-size: 22px; }
@@ -983,13 +1088,45 @@
       LANDA
       <span>Sweden Readiness Insight</span>
     </div>
-    <ul class="nav-links">
-      <li><a id="nav-home"       onclick="show('home')"        class="active">Home</a></li>
-      <li><a id="nav-assessment" onclick="show('assessment')">Assessment</a></li>
-      <li><a id="nav-resources"  onclick="show('resources')">Resources</a></li>
-      <li><a id="nav-about"      onclick="show('about')">About</a></li>
-      <li><a id="nav-developer"  onclick="show('developer')">Contact</a></li>
-    </ul>
+
+    <!-- Desktop nav links wrapper -->
+    <div class="nav-links-wrapper" id="nav-links-wrapper">
+      <ul class="nav-links">
+        <li><a id="nav-home"       onclick="show('home')"        class="active">Home</a></li>
+        <li><a id="nav-assessment" onclick="show('assessment')">Assessment</a></li>
+        <li><a id="nav-resources"  onclick="show('resources')">Resources</a></li>
+        <li><a id="nav-about"      onclick="show('about')">About</a></li>
+        <li><a id="nav-developer"  onclick="show('developer')">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Mobile actions: assessment icon + hamburger pill -->
+    <div class="nav-actions">
+      <button class="nav-icon-btn" onclick="show('assessment')" title="Take Assessment">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Clipboard board -->
+          <rect x="4" y="3" width="13" height="17" rx="2"/>
+          <!-- Clip at top -->
+          <path d="M9 3a3 3 0 0 1 6 0"/>
+          <!-- Checklist rows -->
+          <rect x="7" y="8" width="3" height="3" rx="0.5"/>
+          <line x1="12" y1="9" x2="15" y2="9"/>
+          <rect x="7" y="13" width="3" height="3" rx="0.5"/>
+          <line x1="12" y1="14" x2="15" y2="14"/>
+          <!-- Magnifying glass overlay -->
+          <circle cx="16" cy="17" r="3"/>
+          <line x1="18.5" y1="19.5" x2="21" y2="22"/>
+        </svg>
+      </button>
+      <button class="nav-hamburger" onclick="toggleMenu()" id="nav-hamburger" title="Menu">
+        <span class="menu-label">Menu</span>
+        <span class="menu-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -1450,24 +1587,6 @@
           <h4>👥 Community and Support</h4>
           <ul>
             <li>
-              <a href="https://www.facebook.com/groups/nigeriansinsweden" target="_blank">
-                Nigerians in Sweden
-                <span class="res-desc">Facebook community for Nigerians living in Sweden</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://placeholder.url" target="_blank">
-                LIVING IN SWEDEN by Hannah
-                <span class="res-desc">WhatsApp community for Africans aspiring to relocate to Sweden</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://t.me/studyinswedencommunity" target="_blank">
-                Study in Sweden by Annie
-                <span class="res-desc">Telegram community for aspiring Nigerian and African students</span>
-              </a>
-            </li>
-            <li>
               <a href="https://www.internations.org/sweden-expats" target="_blank">
                 InterNations Sweden
                 <span class="res-desc">International expat community network</span>
@@ -1477,6 +1596,24 @@
               <a href="https://www.thelocal.se" target="_blank">
                 The Local Sweden
                 <span class="res-desc">English-language news and practical guides for expats</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/groups/nigeriansinsweden" target="_blank">
+                Nigerians in Sweden
+                <span class="res-desc">Facebook community for Nigerians living in Sweden</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://placeholder.url" target="_blank">
+                Living In Sweden by Hannah
+                <span class="res-desc">WhatsApp community for Africans aspiring to relocate to Sweden</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://t.me/studyinswedencommunity" target="_blank">
+                Study in Sweden by Annie
+                <span class="res-desc">Telegram community for aspiring Nigerian and African students</span>
               </a>
             </li>
           </ul>
@@ -1618,11 +1755,11 @@
 
       <h2>Built on lived experience</h2>
       <div class="credit-block">
-        This model was developed through insights shared by Dare A., Olumide A., Hannah, and others who chose to remain anonymous. Their honest contributions shaped the weights that drive every profile generated by this tool.
+        The logic behind this tool is directly grounded in the lived experiences of many contributors who live in Sweden, including Dare A., Olumide A., Hannah, and others who chose to remain anonymous. Their honest contributions shaped the weights that drive every profile generated by this tool.
       </div>
 
       <div class="notice-box notice-disclaimer">
-        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of outcomes. The profile it generates is based on a model informed by lived experience and research, but Sweden is a complex environment and there are many variables this tool does not and cannot account for. Do not use this tool as your sole basis for making this decision. Landa has no affiliation with any Swedish institution, authority, or university.
+        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of outcomes. The profile it generates is based on a model informed by lived experience and research, but Sweden is a complex environment and there are many variables this tool does not and cannot account for. Do not use this tool as your sole basis for making a decision. Landa has no affiliation with any Swedish institution, authority, or university.
       </div>
 
     </div>
@@ -1694,7 +1831,20 @@
 <!-- ══════════════════════════════════════════════════════════════ -->
 <script>
   /* ── NAVIGATION ──────────────────────────────────────────────── */
+  /* ── MOBILE MENU ─────────────────────────────────────────────── */
+  function toggleMenu() {
+    const wrapper = document.getElementById('nav-links-wrapper');
+    wrapper.classList.toggle('active');
+  }
+
+  function closeMenu() {
+    const wrapper = document.getElementById('nav-links-wrapper');
+    if (wrapper) wrapper.classList.remove('active');
+  }
+
   function show(page) {
+    closeMenu();
+
     // First, hide all pages and deactivate nav links
     document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
@@ -1736,103 +1886,6 @@
     }
   }
 
-  /* ── RETAKE ASSESSMENT (only this clears results) ──────────── */
-  function retakeAssessment() {
-    clearResults();
-    show('assessment');
-  }
-
-  /* ── RESTORE RESULTS FROM STORAGE ────────────────────────────── */
-  function restoreResultsIfAvailable() {
-    const stored = localStorage.getItem('landaResults');
-    if (stored) {
-      try {
-        const results = JSON.parse(stored);
-        displayResults(results);
-        return true;
-      } catch (e) {
-        console.log('Could not restore results');
-        return false;
-      }
-    }
-    return false;
-  }
-
-  /* ── DISPLAY RESULTS ────────────────────────────────────────── */
-  function displayResults(results) {
-    document.getElementById('result-score').innerHTML = `${results.score} <span class="score-denom">/ 100</span>`;
-    document.getElementById('result-interp').textContent =
-      `Your profile shows a ${results.score}% alignment with the current realities of settling in well in Sweden.`;
-
-    document.getElementById('text-strengths').textContent = results.profile.strengths;
-    document.getElementById('text-risks').textContent     = results.profile.risks;
-    document.getElementById('text-recs').textContent      = results.profile.recs;
-    document.getElementById('text-closing').textContent   = results.profile.closing;
-
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-output').style.display  = 'block';
-    document.getElementById('download-btn').style.display = 'block';
-  }
-
-  /* ── CLEAR RESULTS AND RESET ────────────────────────────────── */
-  function clearResults() {
-    localStorage.removeItem('landaResults');
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-    document.querySelectorAll('select').forEach(s => s.value = '');
-    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-output').style.display = 'none';
-    document.getElementById('download-btn').style.display = 'none';
-  }
-
-  /* ── RETAKE ASSESSMENT (only this clears results) ──────────── */
-  function retakeAssessment() {
-    clearResults();
-    show('assessment');
-  }
-
-  /* ── RESTORE RESULTS FROM STORAGE ────────────────────────────── */
-  function restoreResultsIfAvailable() {
-    const stored = localStorage.getItem('landaResults');
-    if (stored) {
-      try {
-        const results = JSON.parse(stored);
-        displayResults(results);
-        return true;
-      } catch (e) {
-        console.log('Could not restore results');
-        return false;
-      }
-    }
-    return false;
-  }
-
-  /* ── DISPLAY RESULTS ────────────────────────────────────────── */
-  function displayResults(results) {
-    document.getElementById('result-score').innerHTML = `${results.score} <span class="score-denom">/ 100</span>`;
-    document.getElementById('result-interp').textContent =
-      `Your profile shows a ${results.score}% alignment with the current realities of settling in well in Sweden.`;
-
-    document.getElementById('text-strengths').textContent = results.profile.strengths;
-    document.getElementById('text-risks').textContent     = results.profile.risks;
-    document.getElementById('text-recs').textContent      = results.profile.recs;
-    document.getElementById('text-closing').textContent   = results.profile.closing;
-
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-output').style.display  = 'block';
-    document.getElementById('download-btn').style.display = 'block';
-  }
-
-  /* ── CLEAR RESULTS AND RESET ────────────────────────────────── */
-  function clearResults() {
-    localStorage.removeItem('landaResults');
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-    document.querySelectorAll('select').forEach(s => s.value = '');
-    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-output').style.display = 'none';
-    document.getElementById('download-btn').style.display = 'none';
-  }
   function updateTuitionOptions() {
     const prog = document.getElementById('q-programme').value;
     const is1yr = prog === '1yr';
@@ -2091,6 +2144,52 @@
     };
 
     html2pdf().set(opt).from(html).save();
+  }
+
+  /* ── RESULTS RESTORATION ─────────────────────────────────────── */
+  function restoreResultsIfAvailable() {
+    const stored = localStorage.getItem('landaResults');
+    if (stored) {
+      try {
+        const results = JSON.parse(stored);
+        displayResults(results);
+        return true;
+      } catch (e) {
+        console.log('Could not restore results');
+        return false;
+      }
+    }
+    return false;
+  }
+
+  function displayResults(results) {
+    document.getElementById('result-score').innerHTML = `${results.score} <span class="score-denom">/ 100</span>`;
+    document.getElementById('result-interp').textContent =
+      `Your profile shows a ${results.score}% alignment with the current realities of settling in well in Sweden.`;
+
+    document.getElementById('text-strengths').textContent = results.profile.strengths;
+    document.getElementById('text-risks').textContent     = results.profile.risks;
+    document.getElementById('text-recs').textContent      = results.profile.recs;
+    document.getElementById('text-closing').textContent   = results.profile.closing;
+
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display  = 'block';
+    document.getElementById('download-btn').style.display = 'block';
+  }
+
+  function retakeAssessment() {
+    clearResults();
+    show('assessment');
+  }
+
+  function clearResults() {
+    localStorage.removeItem('landaResults');
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    document.querySelectorAll('select').forEach(s => s.value = '');
+    document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+    document.getElementById('loading-profile').style.display = 'none';
+    document.getElementById('profile-output').style.display = 'none';
+    document.getElementById('download-btn').style.display = 'none';
   }
 </script>
 </body>
