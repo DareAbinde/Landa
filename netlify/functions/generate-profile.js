@@ -89,7 +89,7 @@ IN CLOSING
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://landainsight.se',
+        'HTTP-Referer': 'https://getlanda.se',
         'X-Title': 'Landa'
       },
       body: JSON.stringify({
