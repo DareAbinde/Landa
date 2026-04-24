@@ -89,8 +89,8 @@ IN CLOSING
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://getlanda.se',
-        'X-Title': 'Landa'
+        'HTTP-Referer': process.env.SITE_URL,
+        'X-Title': 'Landa Mobility Intelligence'
       },
       body: JSON.stringify({
         model: 'anthropic/claude-haiku-4.5',

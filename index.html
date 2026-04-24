@@ -1,9 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Landa - Mobility Intelligence</title>
+  <meta name="description" content="Advanced mobility intelligence solution for the upwardly mobile. Assess your readiness to relocate with data-driven insights grounded in lived experience." />
+  <meta name="keywords" content="mobility, relocation, migration, intelligence, decision support, international students, Sweden" />
+  
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="Landa - Mobility Intelligence" />
+  <meta property="og:description" content="Advanced mobility intelligence solution for the upwardly mobile. Assess your readiness to relocate with data-driven insights." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://getlanda.se" />
+  <meta property="og:site_name" content="Landa" />
+  <meta property="og:image" content="https://getlanda.se/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Landa - Mobility Intelligence" />
+  <meta name="twitter:description" content="Advanced mobility intelligence solution for the upwardly mobile." />
+  <meta name="twitter:image" content="https://getlanda.se/og-image.png" />
+  
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Landa — Sweden Readiness Insight Tool</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -1096,7 +1114,7 @@
   <div class="nav-inner">
     <div class="logo" onclick="show('home')">
       LANDA
-      <span>Sweden Readiness Insight</span>
+      <span>Mobility Intelligence</span>
     </div>
 
     <!-- Desktop nav links wrapper -->
@@ -1136,7 +1154,7 @@
         <h1>LANDA</h1>
         <div class="hero-sub">to settle · to land · to build roots</div>
         <p class="hero-desc">
-          An insight tool for international students considering Sweden. Not a decision-maker — a mirror that reflects how your profile aligns with the realities of building a life in the country.
+          A mobility intelligence tool for international students considering Sweden. Not a decision-maker — a mirror that reflects how your profile aligns with the realities of building a life in the country.
         </p>
         <button class="btn-primary" onclick="show('assessment')">Begin Assessment</button>
       </div>
@@ -1223,7 +1241,7 @@
       </div>
 
       <div class="notice-box notice-disclaimer">
-        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of success or failure, and it should not be the sole basis for your decision. Sweden is a complex, dynamic environment and there are variables that no model can fully account for. Use this alongside conversations with people who have been there, official information from institutions, and your own judgment.
+        <strong>Disclaimer:</strong> Landa is a mobility intelligence and decision-support tool. It is not a predictor of success or failure, and it should not be the sole basis for your decision. Sweden is a complex, dynamic environment and there are variables that no model can fully account for. Use this alongside conversations with people who have been there, official information from institutions, and your own judgment.
       </div>
 
     </div>
@@ -1443,7 +1461,41 @@
   <div class="results-wrap">
     <div class="wrap">
       <button class="btn-retake" onclick="retakeAssessment()">← Retake Assessment</button>
-      <button class="btn-download" id="download-btn" onclick="downloadProfilePDF()" style="display:none;">↓ Download Profile</button>
+
+      <div id="email-section" style="margin-top: 24px; padding: 24px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E8ECF1;">
+        <h3 style="font-size: 16px; color: #1B2A4A; margin: 0 0 16px 0;">Get Your Report</h3>
+        
+        <div style="margin-bottom: 16px;">
+          <input 
+            type="email" 
+            id="user-email" 
+            placeholder="your.email@example.com" 
+            style="width: 100%; padding: 12px 14px; border: 1px solid #E8ECF1; border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s;"
+          />
+        </div>
+
+        <div style="margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px;">
+          <input 
+            type="checkbox" 
+            id="gdpr-consent" 
+            style="margin-top: 3px; cursor: pointer; width: 18px; height: 18px; accent-color: #3D6B55;"
+          />
+          <label for="gdpr-consent" style="font-size: 13px; color: #6B7A8D; cursor: pointer; margin: 0;">
+            I agree to receive my report and occasional updates from Landa via email.
+          </label>
+        </div>
+
+        <button 
+          id="send-btn" 
+          style="width: 100%; padding: 12px 16px; background: #3D6B55; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; font-family: inherit;"
+          onmouseover="this.style.background='#2f5544'"
+          onmouseout="this.style.background='#3D6B55'"
+        >
+          Email My Report
+        </button>
+        
+        <p id="status-message" style="margin-top: 12px; font-size: 13px; color: #6B7A8D; text-align: center;"></p>
+      </div>
 
       <div class="score-hero">
         <div class="score-num" id="result-score">—</div>
@@ -1475,7 +1527,7 @@
       </div>
 
       <div class="notice-box notice-disclaimer">
-        <strong>Remember:</strong> This profile reflects your current alignment with Sweden's realities. It is one input among many. Use it alongside advice from people with lived experience, official sources, and your own judgment. Circumstances change, and so can your readiness.
+        <strong>Remember:</strong> This profile reflects your current alignment with Sweden's realities. It is one input among many. Use it alongside advice from people, official sources, and your own judgment. Circumstances change, and so can your readiness.
       </div>
 
     </div>
@@ -1676,7 +1728,7 @@
 
       <h2>The idea</h2>
       <p>
-        Landa was built out of a simple observation: many students from Africa and non-EU regions make the decision to study in Sweden with very little structured guidance grounded in real, lived experience. The information that exists is either too generic, too optimistic, or too focused on the academic side of the journey while ignoring the harder question — what does it actually take to settle here and build a life?
+        Landa was built out of a simple observation: many students from Africa and non-EU regions make the decision to study in Sweden with very little structured guidance grounded in real, lived experience. The information that exists is either too generic, too optimistic, too pessimistic, or too focused on the academic side of the journey while ignoring the harder question — what does it actually take to settle here and build a life?
       </p>
       <p>
         This tool attempts to answer that question honestly. It does not tell you whether to go. It holds up a mirror and shows you how your current profile aligns with the country's realities, based on the collective experience of people who have lived it.
@@ -1738,8 +1790,10 @@
       <p>
         No model captures the full complexity of a person's situation. Landa does not account for your professional experience, your personal network, your psychological resilience, your family circumstances, or the countless other variables that shape how someone's story in a new country unfolds. The score is a starting point for reflection, not a verdict.
       </p>
+
+      <h2>What's coming</h2>
       <p>
-        The model is also based on a relatively small assessor pool at this stage. As more people contribute their experience, the weights will be recalibrated and the tool will become more robust.
+        Landa currently focuses on Sweden. We are building toward a multi-country platform grounded in the lived experience of people who have moved and settled across the globe. The model you see here will expand to support mobility decisions to other countries, with each assessment calibrated to local realities and built on collective insights from those who have been there.
       </p>
 
       <h2>Privacy and data</h2>
@@ -1749,11 +1803,11 @@
 
       <h2>Built on lived experience</h2>
       <div class="credit-block">
-        The logic behind this tool is directly grounded in the lived experiences of many contributors who live in Sweden, including Dare A., Olumide A., Hannah, and others who chose to remain anonymous. Their honest contributions shaped the weights that drive every profile generated by this tool.
+        The model behind this tool is directly grounded in the lived experiences of many contributors who live in Sweden. Their honest contributions shaped the weights that drive every profile generated by this tool.
       </div>
 
       <div class="notice-box notice-disclaimer">
-        <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of outcomes. The profile it generates is based on a model informed by lived experience and research, but Sweden is a complex environment and there are many variables this tool does not and cannot account for. Do not use this tool as your sole basis for making a decision. Landa has no affiliation with any Swedish institution, authority, or university.
+        <strong>Disclaimer:</strong> Landa is a mobility intelligence and decision-support tool. It is not a predictor of outcomes. The profile it generates is based on a model informed by lived experience and research, but Sweden is a complex environment and there are many variables this tool does not and cannot account for. Do not use this tool as your sole basis for making a decision. Landa has no affiliation with any Swedish institution, authority, or university.
       </div>
 
     </div>
@@ -1775,9 +1829,7 @@
         <p>
           I built Landa because I am living the experience this tool is designed to inform. As an international student from Nigeria navigating Sweden's systems, job market, and social fabric, I wanted to create something honest and grounded that could help the people coming after me make a better-informed decision before they commit.
         </p>
-        <p>
-          Landa is a free tool and will remain so. It is not affiliated with any institution or commercial interest.
-        </p>
+
         <h4 style="font-size: 16px; font-weight: 700; color: var(--navy); margin: 28px 0 14px; margin-top: 32px;">What I do</h4>
         <p>
           I work across Interaction and Service Design as a researcher and product thinker. I have a strong commitment to <em>genuinely</em> user-centred and data-driven product design and development. I research and build tools and systems that address real problems for real people.
@@ -1789,7 +1841,7 @@
           For questions, feedback, or if you are interested in contributing your experience as an assessor to strengthen the Landa model, feel free to reach out.
         </p>
         <p>
-          <strong>Email:</strong> <a href="mailto:dareabinde04@gmail.com">dareabinde04@gmail.com</a>
+          <strong>Email:</strong> <a href="mailto:info@getlanda.se">info@getlanda.com</a>
         </p>
       </div>
 
@@ -1805,7 +1857,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-disclaimer">
-      <strong>Disclaimer:</strong> Landa is an insight and decision-support tool. It is not a predictor of success or failure and should not be the sole basis for any decision. There are variables this model cannot account for. Use it alongside other sources of information and advice. Landa has no affiliation with the Swedish Migration Agency, any Swedish university, or any government body.
+      <strong>Disclaimer:</strong> Landa is a mobility intelligence and decision-support tool. It is not a predictor of success or failure and should not be the sole basis for any decision. There are variables this model cannot account for. Use it alongside other sources of information and advice. Landa has no affiliation with the Swedish Migration Agency, any Swedish university, or any government body.
     </div>
     <div class="footer-links">
       <a onclick="show('home')">Home</a>
@@ -1815,7 +1867,7 @@
       <a onclick="show('developer')">Contact</a>
     </div>
     <div class="footer-bottom">
-      © 2026 Landa. Built by Dare Abinde. Free to use, free to share.
+      © 2026 Landa. Free to use, free to share. · <em>🌍 Sweden · More countries coming</em>
     </div>
   </div>
 </footer>
@@ -2094,7 +2146,7 @@
     const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.4; color: #2B3545; padding: 15px;">
         <h1 style="font-size: 24px; color: #1B2A4A; margin-bottom: 4px;">Landa</h1>
-        <div style="color: #C9A84C; font-size: 12px; margin-bottom: 16px;">Your Sweden Readiness Profile</div>
+        <div style="color: #C9A84C; font-size: 12px; margin-bottom: 16px;">Your Sweden Mobility Profile</div>
 
         <div style="background: #f5f5f5; padding: 12px; border-left: 4px solid #C9A84C; margin: 16px 0;">
           <div style="font-size: 36px; font-weight: 700; color: #C9A84C;">${score} / 100</div>
@@ -2183,8 +2235,82 @@
     document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
     document.getElementById('loading-profile').style.display = 'none';
     document.getElementById('profile-output').style.display = 'none';
-    document.getElementById('download-btn').style.display = 'none';
   }
+
+  /* ── EMAIL REPORT SENDING ───────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const sendBtn = document.getElementById('send-btn');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', async () => {
+        const email = document.getElementById('user-email').value.trim();
+        const consentCheckbox = document.getElementById('gdpr-consent');
+        const statusMsg = document.getElementById('status-message');
+        const reportContent = document.getElementById('profile-output')?.innerText || '';
+
+        // Validation
+        if (!email) {
+          statusMsg.innerText = "Please enter an email address.";
+          statusMsg.style.color = "#E74C3C";
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          statusMsg.innerText = "Please enter a valid email address.";
+          statusMsg.style.color = "#E74C3C";
+          return;
+        }
+
+        if (!consentCheckbox.checked) {
+          statusMsg.innerText = "Please agree to receive your report.";
+          statusMsg.style.color = "#E74C3C";
+          return;
+        }
+
+        if (!reportContent) {
+          statusMsg.innerText = "No report to send. Complete the assessment first.";
+          statusMsg.style.color = "#E74C3C";
+          return;
+        }
+
+        statusMsg.innerText = "Sending your report...";
+        statusMsg.style.color = "#6B7A8D";
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = "0.6";
+
+        try {
+          const response = await fetch('/.netlify/functions/send-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              reportContent: reportContent,
+              consentGiven: consentCheckbox.checked
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            statusMsg.innerText = "✓ Check your inbox! Your report is on its way.";
+            statusMsg.style.color = "#3D6B55";
+            document.getElementById('user-email').value = '';
+            consentCheckbox.checked = false;
+          } else {
+            statusMsg.innerText = data.error || "Failed to send. Please try again.";
+            statusMsg.style.color = "#E74C3C";
+          }
+        } catch (err) {
+          console.error('Error:', err);
+          statusMsg.innerText = "Something went wrong. Please try again.";
+          statusMsg.style.color = "#E74C3C";
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = "1";
+        }
+      });
+    }
+  });
 </script>
 </body>
 </html>
