@@ -1462,7 +1462,7 @@
     <div class="wrap">
       <button class="btn-retake" onclick="retakeAssessment()">← Retake Assessment</button>
 
-      <div id="email-section" style="margin-top: 24px; padding: 24px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E8ECF1;">
+      <div id="email-section" style="display: none; margin-top: 24px; padding: 24px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E8ECF1;">
         <h3 style="font-size: 16px; color: #1B2A4A; margin: 0 0 16px 0;">Get Your Report</h3>
         
         <div style="margin-bottom: 16px;">
@@ -1923,7 +1923,7 @@
       document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
       document.getElementById('loading-profile').style.display = 'none';
       document.getElementById('profile-output').style.display = 'none';
-      document.getElementById('download-btn').style.display = 'none';
+      document.getElementById('email-section').style.display = 'none';
     }
 
     if (page === 'results') {
@@ -2067,7 +2067,7 @@
     document.getElementById('loading-profile').innerHTML = '<div class="spinner"></div><p>Generating your personalised profile...</p>';
     document.getElementById('loading-profile').style.display = 'block';
     document.getElementById('profile-output').style.display = 'none';
-    document.getElementById('download-btn').style.display = 'none';
+    document.getElementById('email-section').style.display = 'none';
 
     try {
       const res = await fetch('/.netlify/functions/generate-profile', {
@@ -2089,7 +2089,7 @@
 
       document.getElementById('loading-profile').style.display = 'none';
       document.getElementById('profile-output').style.display  = 'block';
-      document.getElementById('download-btn').style.display = 'block';
+      document.getElementById('email-section').style.display = 'block';
 
       // Save results to localStorage
       const results = {
@@ -2220,7 +2220,7 @@
 
     document.getElementById('loading-profile').style.display = 'none';
     document.getElementById('profile-output').style.display  = 'block';
-    document.getElementById('download-btn').style.display = 'block';
+    document.getElementById('email-section').style.display = 'block';
   }
 
   function retakeAssessment() {
@@ -2235,81 +2235,88 @@
     document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
     document.getElementById('loading-profile').style.display = 'none';
     document.getElementById('profile-output').style.display = 'none';
+    document.getElementById('email-section').style.display = 'none';
   }
 
   /* ── EMAIL REPORT SENDING ───────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
-    if (sendBtn) {
-      sendBtn.addEventListener('click', async () => {
-        const email = document.getElementById('user-email').value.trim();
-        const consentCheckbox = document.getElementById('gdpr-consent');
-        const statusMsg = document.getElementById('status-message');
-        const reportContent = document.getElementById('profile-output')?.innerText || '';
+    if (!sendBtn) return; // Exit early if not on results page
 
-        // Validation
-        if (!email) {
-          statusMsg.innerText = "Please enter an email address.";
+    sendBtn.addEventListener('click', async () => {
+      const email = document.getElementById('user-email')?.value?.trim() || '';
+      const consentCheckbox = document.getElementById('gdpr-consent');
+      const statusMsg = document.getElementById('status-message');
+      const reportContent = document.getElementById('profile-output')?.innerText || '';
+
+      // Safe null checks for all required elements
+      if (!statusMsg || !consentCheckbox) {
+        console.error('Required elements not found');
+        return;
+      }
+
+      // Validation
+      if (!email) {
+        statusMsg.innerText = "Please enter an email address.";
+        statusMsg.style.color = "#E74C3C";
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        statusMsg.innerText = "Please enter a valid email address.";
+        statusMsg.style.color = "#E74C3C";
+        return;
+      }
+
+      if (!consentCheckbox.checked) {
+        statusMsg.innerText = "Please agree to receive your report.";
+        statusMsg.style.color = "#E74C3C";
+        return;
+      }
+
+      if (!reportContent) {
+        statusMsg.innerText = "No report to send. Complete the assessment first.";
+        statusMsg.style.color = "#E74C3C";
+        return;
+      }
+
+      statusMsg.innerText = "Sending your report...";
+      statusMsg.style.color = "#6B7A8D";
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = "0.6";
+
+      try {
+        const response = await fetch('/.netlify/functions/send-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            reportContent: reportContent,
+            consentGiven: consentCheckbox.checked
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          statusMsg.innerText = "✓ Check your inbox! Your report is on its way.";
+          statusMsg.style.color = "#3D6B55";
+          document.getElementById('user-email').value = '';
+          consentCheckbox.checked = false;
+        } else {
+          statusMsg.innerText = data.error || "Failed to send. Please try again.";
           statusMsg.style.color = "#E74C3C";
-          return;
         }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          statusMsg.innerText = "Please enter a valid email address.";
-          statusMsg.style.color = "#E74C3C";
-          return;
-        }
-
-        if (!consentCheckbox.checked) {
-          statusMsg.innerText = "Please agree to receive your report.";
-          statusMsg.style.color = "#E74C3C";
-          return;
-        }
-
-        if (!reportContent) {
-          statusMsg.innerText = "No report to send. Complete the assessment first.";
-          statusMsg.style.color = "#E74C3C";
-          return;
-        }
-
-        statusMsg.innerText = "Sending your report...";
-        statusMsg.style.color = "#6B7A8D";
-        sendBtn.disabled = true;
-        sendBtn.style.opacity = "0.6";
-
-        try {
-          const response = await fetch('/.netlify/functions/send-report', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: email,
-              reportContent: reportContent,
-              consentGiven: consentCheckbox.checked
-            })
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            statusMsg.innerText = "✓ Check your inbox! Your report is on its way.";
-            statusMsg.style.color = "#3D6B55";
-            document.getElementById('user-email').value = '';
-            consentCheckbox.checked = false;
-          } else {
-            statusMsg.innerText = data.error || "Failed to send. Please try again.";
-            statusMsg.style.color = "#E74C3C";
-          }
-        } catch (err) {
-          console.error('Error:', err);
-          statusMsg.innerText = "Something went wrong. Please try again.";
-          statusMsg.style.color = "#E74C3C";
-        } finally {
-          sendBtn.disabled = false;
-          sendBtn.style.opacity = "1";
-        }
-      });
-    }
+      } catch (err) {
+        console.error('Error:', err);
+        statusMsg.innerText = "Something went wrong. Please try again.";
+        statusMsg.style.color = "#E74C3C";
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.style.opacity = "1";
+      }
+    });
   });
 </script>
 </body>

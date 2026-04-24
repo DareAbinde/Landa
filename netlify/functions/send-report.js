@@ -1,6 +1,3 @@
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 exports.handler = async (event) => {
   // Only allow POST requests
   if (event.httpMethod !== "POST") {
@@ -8,6 +5,15 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Check for API key
+    if (!process.env.RESEND_API_KEY) {
+      return { statusCode: 500, body: JSON.stringify({ error: "RESEND_API_KEY not configured" }) };
+    }
+
+    // Dynamic import of Resend
+    const { Resend } = await import('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const { email, reportContent, consentGiven } = JSON.parse(event.body);
 
     // Validate email format
@@ -56,7 +62,7 @@ ${reportContent}
           </p>
           
           <div style="background: #F8FAFC; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 12px; color: #6B7A8D; line-height: 1.5;">
-            <p style="margin: 0;">© 2026 Landa. Built by Dare Abinde. Free to use, free to share.</p>
+            <p style="margin: 0;">© 2026 Landa. Free to use, free to share.</p>
             <p style="margin: 8px 0 0 0;">🌍 <em>Sweden · More countries coming</em></p>
           </div>
         </div>
