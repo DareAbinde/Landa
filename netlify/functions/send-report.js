@@ -14,7 +14,7 @@ exports.handler = async (event) => {
     const { Resend } = await import('resend');
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const { email, reportContent, consentGiven } = JSON.parse(event.body);
+    const { email, reportContent, requestedReport, marketingConsent = false } = JSON.parse(event.body);
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,9 +22,9 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: "Valid email address required" }) };
     }
 
-    // Validate GDPR consent
-    if (!consentGiven) {
-      return { statusCode: 400, body: JSON.stringify({ error: "GDPR consent required" }) };
+    // Report delivery is transactional. Marketing consent is optional and separate.
+    if (!requestedReport) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Report request required" }) };
     }
 
     if (!reportContent) {
@@ -38,16 +38,16 @@ exports.handler = async (event) => {
       replyTo: 'getlandahelp@gmail.com',
       subject: 'Your Landa Mobility Intelligence Report',
       html: `
-        <div style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2332;">
-          <div style="background: linear-gradient(135deg, #0F1820 0%, #1a3a50 100%); padding: 32px; border-radius: 12px; text-align: center; margin-bottom: 32px;">
-            <h1 style="color: #C9A84C; margin: 0; font-size: 32px; letter-spacing: -1px;">Landa</h1>
-            <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0 0;">Mobility Intelligence</p>
+        <div style="font-family: Inter, Arial, Helvetica, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2332;">
+          <div style="background:#0F1820; padding: 32px; border-radius: 8px; text-align: center; margin-bottom: 32px;">
+            <h1 style="color:#ffffff; margin:0; font-size:24px; letter-spacing:-0.3px;">get<span style="color:#E0523D;">Landa</span>.se</h1>
+            <p style="color:rgba(255,255,255,0.68); margin:8px 0 0;">Student mobility intelligence</p>
           </div>
           
-          <h2 style="color: #1B2A4A; margin: 24px 0 16px 0; font-size: 20px;">Your Mobility Intelligence Report</h2>
+          <h2 style="color:#0F1820; margin:24px 0 16px; font-size:20px;">Your Landa Full Report</h2>
           <p style="color: #6B7A8D; margin: 0 0 24px 0;">Thank you for using Landa. Below is your generated profile:</p>
           
-          <div style="background: #F8FAFC; border-left: 4px solid #C9A84C; padding: 20px; border-radius: 8px; margin: 24px 0; white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #1A2332; font-family: 'Courier New', monospace;">
+          <div style="background:#F5F5F7; border-left:4px solid #E0523D; padding:20px; border-radius:8px; margin:24px 0; white-space:pre-wrap; font-size:14px; line-height:1.65; color:#0F1820;">
 ${reportContent}
           </div>
           
@@ -58,12 +58,13 @@ ${reportContent}
           </p>
           
           <p style="color: #6B7A8D; font-size: 13px; margin: 16px 0;">
-            Questions? Reply to this email or visit <a href="https://getlanda.se" style="color: #C9A84C; text-decoration: none;">getlanda.se</a>
+            Questions? Reply to this email or visit <a href="https://getlanda.se" style="color:#E0523D; text-decoration:none;">getlanda.se</a>
           </p>
           
           <div style="background: #F8FAFC; padding: 16px; border-radius: 8px; margin-top: 24px; font-size: 12px; color: #6B7A8D; line-height: 1.5;">
             <p style="margin: 0;">© 2026 Landa. Free to use, free to share.</p>
-            <p style="margin: 8px 0 0 0;">🌍 <em>Sweden · More countries coming</em></p>
+            <p style="margin:8px 0 0;">Sweden is the starting point. More countries are planned.</p>
+            ${marketingConsent ? '<p style="margin:8px 0 0;">You opted in to occasional Landa updates.</p>' : ''}
           </div>
         </div>
       `
